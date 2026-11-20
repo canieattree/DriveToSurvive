@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Electronic Racing Championship</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0714;--ink:#f1ecff;--cy:#3df5ff;--mg:#ff3df2;--yl:#ffe14d;--gr:#5dff7a;--rd:#ff4d5e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Press Start 2P','Courier New',monospace;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+#cab{width:100%;max-width:1200px;margin:0 auto;min-height:100vh;background:radial-gradient(ellipse at top,#241250,#0a0714 70%)}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 4vw;background:#150b30;border-bottom:3px solid var(--mg);font-size:clamp(10px,1.4vw,14px);color:var(--cy);text-shadow:0 0 8px var(--cy)}
+.sm{font:inherit;font-size:9px;padding:8px;background:none;color:#fff;border:2px solid #fff;cursor:pointer}
+#ui{padding:20px 4vw 40px;font-size:clamp(9px,1.1vw,12px);line-height:2;max-width:1000px;margin:0 auto}
+h1{font-size:clamp(18px,3.4vw,34px);line-height:1.5;color:var(--mg);text-shadow:3px 3px 0 #3a0f5a,0 0 16px var(--mg);margin:8px 0}
+h2{font-size:clamp(12px,1.8vw,18px);color:var(--yl);margin:8px 0}
+.dim{color:#a99ede}.warn{color:var(--rd)}.hd{display:flex;justify-content:space-between;color:var(--cy);gap:10px}
+.btn{font:inherit;font-size:clamp(9px,1.1vw,12px);padding:13px;background:#2a1a5e;color:#fff;border:3px solid #fff;box-shadow:0 4px 0 #000;cursor:pointer;margin:4px 0}
+.btn:active{transform:translateY(3px);box-shadow:none}.btn:disabled{opacity:.35;cursor:default}
+.go{background:#128a3e}.big{width:100%;padding:18px;margin-top:12px}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;line-height:1.7}
+.ok{background:#128a3e!important}.bad{background:#b3202f!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:12px 0}
+.card{border:2px solid #4b3a8f;padding:12px;background:#1a1038}
+.card b{color:var(--yl)}.card i{font-style:normal;color:var(--cy)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.pips{margin:8px 0}.pips s{display:inline-block;width:26px;height:11px;border:2px solid #5a4a9a;margin-right:5px}
+.pips s.on{background:var(--gr);border-color:var(--gr)}.pips s.ul{border-color:var(--yl);animation:bl 1s steps(2) infinite}
+.blink{animation:bl 1s steps(2) infinite;color:var(--yl);margin:16px 0}
+@keyframes bl{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.blink,.pips s.ul{animation:none}}
+table{width:100%;border-collapse:collapse;margin:10px 0}td,th{padding:8px 4px;text-align:left;border-bottom:2px solid #3a2a78;font-weight:normal}
+.me td{color:var(--yl)}
+#ui>*{animation:up .35s ease-out both}
+@keyframes up{from{opacity:0;transform:translateY(10px)}}
+.hb{display:flex;gap:8px}.sm.arm{background:#b3202f;border-color:#ff4d5e}
+.btn{transition:filter .15s,transform .15s}.btn:hover:not(:disabled){filter:brightness(1.2);transform:translateY(-2px)}
+.card{transition:transform .2s}.card:hover{transform:translateY(-2px)}
+.ic{width:100%;max-width:128px;aspect-ratio:2/1;image-rendering:pixelated;background:#0d0820;margin-bottom:6px}
+#cs{position:relative;overflow:hidden;background:#0d0820;border:3px solid #4b3a8f;margin:22px 0;transition:box-shadow .5s,border-color .5s}
+#cs::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0a0714,transparent 22%,transparent 78%,#0a0714);pointer-events:none}
+#pt{position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1px;background:var(--yl);z-index:2;box-shadow:0 0 14px var(--yl)}
+#st{display:flex;will-change:transform;padding:10px 0}
+.cl{flex:0 0 136px;margin:0 2px;padding:6px;background:#1a1038;border-bottom:4px solid;text-align:center;font-size:7px;line-height:1.6}
+.cl canvas{width:100%;display:block;image-rendering:pixelated}
+.pop{animation:pop .6s cubic-bezier(.2,1.6,.4,1) both,glow 1.4s ease-in-out .6s infinite alternate;text-align:center}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes glow{to{box-shadow:0 0 30px var(--c)}}
+@media (prefers-reduced-motion:reduce){#ui>*,.pop{animation:none}}
+#cv{display:block;width:min(100%,calc(74vh*16/9));aspect-ratio:16/9;margin:0 auto;image-rendering:pixelated;background:#000}
+#pads{display:flex;flex-wrap:wrap;gap:10px;padding:10px 4vw}
+.pad{flex:1 1 300px;max-width:520px;margin:0 auto;display:flex;gap:6px}
+.pad div{display:flex;gap:6px;flex:1}
+.pad button{font:inherit;font-size:15px;flex:1;min-width:0;height:70px;background:#2a1a5e;color:#fff;border:3px solid #ff4d5e;border-radius:12px;touch-action:none}
+.pad[data-p="2"] button{border-color:#b25cff}
+.pad button.s{font-size:8px}.pad button:active{background:#5b3bd1}
+@media (pointer:fine){#pads{display:none}}
+#hint{text-align:center;font-size:8px;line-height:2;padding:6px 4vw}
+</style></head><body>
+<div id="cab">
+<header><b>ELECTRONIC RACING CHAMPIONSHIP</b><div class="hb"><button id="ex" class="sm" hidden>✕ MENU</button><button id="mu" class="sm">SND ON</button></div></header>
+<div id="ui"></div>
+<div id="race" hidden><canvas id="cv"></canvas>
+<div id="pads">
+<div class="pad" data-p="1"><div><button data-p="1" data-k="l">◀</button><button data-p="1" data-k="r">▶</button></div><div><button class="s" data-p="1" data-k="b">BRAKE</button><button class="s" id="b1" data-p="1" data-k="n">BOOST</button></div></div>
+<div class="pad" data-p="2" id="pad2" hidden><div><button data-p="2" data-k="l">◀</button><button data-p="2" data-k="r">▶</button></div><div><button class="s" data-p="2" data-k="b">BRAKE</button><button class="s" id="b2" data-p="2" data-k="n">BOOST</button></div></div>
+</div><p id="hint" class="dim"></p></div>
+</div>
+<script>
+const W=640,H=360,LAPS=3,HW=22,SC=1.7,PIT=60,$=s=>document.querySelector(s);
+const cv=$('#cv'),g=cv.getContext('2d');cv.width=W;cv.height=H;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const fmt=t=>{t=Math.max(0,t);return String(t/60|0).padStart(2,'0')+':'+(t%60).toFixed(1).padStart(4,'0')};
+const ad=(a,b)=>{let d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return d};
+
+/* sound */
+let AC,mute=0;
+function beep(f,d=.1,ty='square',v=.05,w=0){if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),n=AC.createGain(),t=AC.currentTime+w;o.type=ty;o.frequency.value=f;n.gain.setValueAtTime(v,t);n.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(n);n.connect(AC.destination);o.start(t);o.stop(t+d)}catch(e){}}
+$('#mu').onclick=e=>{mute=!mute;e.target.textContent=mute?'SND OFF':'SND ON';e.target.blur()};
+
+/* questions: [question, CORRECT, wrong, wrong, wrong, explanation] */
+const QV=[
+["What unit is voltage measured in?","Volts (V)","Amps (A)","Ohms (Ω)","Watts (W)","Voltage is the push that moves current round a circuit. It is measured in volts."],
+["What unit is current measured in?","Amps (A)","Volts (V)","Ohms (Ω)","Metres (m)","Current is the flow of electric charge, measured in amps."],
+["Which meter measures voltage?","Voltmeter","Ammeter","Thermometer","Speedometer","A voltmeter measures voltage. An ammeter measures current."],
+["The resistance stays the same but you raise the voltage. What happens to the current?","It goes up","It goes down","It stays the same","It stops","More push means more current."],
+["Ohm’s Law says voltage (V) equals...","Current × Resistance","Current + Resistance","Current ÷ Resistance","Resistance − Current","V = I × R."],
+["2 A flows through a 6 Ω resistor. What is the voltage across it?","12 V","3 V","8 V","4 V","V = I × R = 2 × 6 = 12 V."]];
+const QR=[
+["What unit is resistance measured in?","Ohms (Ω)","Volts (V)","Amps (A)","Hertz (Hz)","Resistance is measured in ohms, shown with the symbol Ω."],
+["What does a resistor do?","Limits the flow of current","Stores electricity","Makes voltage","Switches things on","A resistor opposes current, so it limits how much flows."],
+["The voltage stays the same but resistance goes up. What happens to current?","It goes down","It goes up","It stays the same","It doubles","More resistance means less current."],
+["What do the coloured bands on a resistor tell you?","Its resistance value","Its voltage","Its age","How hot it is","The bands are a colour code for the resistance value."],
+["Brown, black, red bands. What is the value?","1000 Ω (1 kΩ)","102 Ω","10 Ω","2 kΩ","Brown = 1, black = 0, red = ×100. That gives 10 × 100 = 1000 Ω."],
+["Why do we put a resistor in series with an LED?","To stop too much current burning it out","To make it flash","To change its colour","To make it brighter than normal","An LED has very little resistance of its own, so a resistor protects it."]];
+const QS=[
+["How many paths does current have in a series circuit?","Only one","Two","Three","None","In a series circuit everything is in one loop."],
+["Two 100 Ω resistors are in series. What is the total?","200 Ω","50 Ω","100 Ω","10,000 Ω","In series, resistances add up: 100 + 100 = 200 Ω."],
+["One bulb in a series circuit breaks. What happens to the others?","They all go out","They get brighter","Nothing changes","They flash","The loop is broken, so current stops everywhere."],
+["What is a breadboard used for?","Building circuits without soldering","Cooking food","Programming chips","Measuring voltage","Components push into the holes, so you can test an idea and change it easily."],
+["What is a PCB?","A board with copper tracks that joins components","A type of battery","A kind of resistor","A computer screen","PCB means Printed Circuit Board. The copper tracks act as the wires."],
+["What do the copper tracks on a PCB do?","Connect the components together","Make the board heavier","Store power","Cool the chips","The tracks are the wires of the circuit, printed onto the board."],
+["Which is permanent: a soldered PCB or a breadboard circuit?","The soldered PCB","The breadboard","Both","Neither","Solder makes a permanent joint. A breadboard is for testing."]];
+const QP=[
+["What is a PICAXE?","A microcontroller you can program","A type of resistor","A kind of battery","A circuit board cleaner","A PICAXE is a small chip that follows the program you give it."],
+["What does the command  high B.0  do?","Turns output pin B.0 on","Turns output pin B.0 off","Waits for B.0","Ends the program","high switches an output on, for example to light an LED."],
+["Which command turns an output off?","low","off","stop","end","low switches an output off."],
+["What does  pause 1000  do?","Waits for 1 second","Waits for 1000 seconds","Turns an LED on","Ends the program","The number is in milliseconds, so 1000 is 1 second."],
+["What does  goto main  do?","Jumps back to the label called main","Ends the program","Turns on the output","Resets the chip","goto jumps to a label, which is how a program loops."],
+["How does a program get into a PICAXE chip?","Download it with a programming cable","Type on the chip","Plug in a resistor","Shake it","You write the program on a computer and download it through the cable."]];
+const CATS=[
+{k:'eng',n:'ENGINE',t:'VOLTAGE',d:'Faster top speed and acceleration',pool:QV},
+{k:'han',n:'HANDLING',t:'RESISTORS',d:'Sharper turns and better grip',pool:QR},
+{k:'tur',n:'TURBO',t:'CIRCUITS, BREADBOARD, PCB',d:'+1 boost charge per race',pool:QS},
+{k:'ecu',n:'ECU',t:'PICAXE',d:'Boosts last longer',pool:QP}];
+const COST=[100,150,200],PTS=[10,6,4,2],PRIZE=[200,120,80,40];
+
+/* tracks: e = environment (0 harbour, 1 city, 2 PCB) */
+const TRACKS=[
+{n:'HARBOUR GRAND PRIX',e:0,p:[[50,60],[180,40],[310,60],[322,135],[300,215],[180,235],[60,215],[40,135]]},
+{n:'CITY STREET CIRCUIT',e:1,p:[[45,50],[150,45],[190,100],[250,110],[300,50],[325,130],[310,215],[220,230],[180,170],[120,180],[100,235],[40,215],[30,130]]},
+{n:'PCB SPEEDWAY',e:2,p:[[40,40],[120,30],[170,80],[130,120],[200,150],[260,100],[320,60],[335,150],[300,225],[220,242],[185,208],[130,215],[70,240],[30,190],[60,140],[25,100]]}];
+const BC=[['#d98a6a','#e8c07a','#c9ced9','#f0ebdc','#7aa0d6','#c98a9a'],['#59647c','#7a5560','#4c6b5e','#8a7a5a','#6a5f8a','#a0a4b0']];
+TRACKS[0].p=[[220,314],[310,314],[400,314],[455,314],[500,314],[536,300],[550,266],[536,232],[500,218],[440,216],[400,238],[350,208],[300,230],[255,224],[215,221],[180,208],[165,171],[180,134],[215,121],[260,118],[320,126],[380,110],[440,124],[480,121],[520,118],[548,106],[560,78],[548,50],[520,38],[440,40],[350,52],[260,38],[180,46],[110,58],[62,92],[85,145],[48,190],[80,235],[70,275],[95,305],[130,314],[170,314]];
+TRACKS[1].p=[[250,48],[340,48],[430,48],[510,48],[565,56],[596,92],[598,130],[572,158],[520,155],[470,150],[420,165],[370,150],[330,152],[290,158],[268,192],[290,226],[330,232],[390,236],[450,226],[510,232],[560,244],[595,266],[598,292],[572,318],[520,322],[440,318],[350,322],[260,318],[180,322],[120,316],[75,290],[58,245],[72,200],[52,160],[78,118],[60,80],[88,52],[130,48],[190,48]];
+TRACKS[2].p=[[70,205],[70,150],[70,100],[78,68],[110,48],[170,46],[230,50],[280,86],[330,86],[370,52],[440,46],[520,50],[565,58],[598,92],[602,140],[582,166],[520,165],[450,168],[390,165],[320,165],[288,172],[264,202],[288,232],[320,240],[390,244],[450,238],[520,242],[565,252],[598,280],[596,304],[570,322],[480,322],[400,322],[320,322],[240,322],[160,322],[110,320],[80,296],[70,262],[70,232]];
+function build(t){
+ const P=t.p,n=P.length,C=[],e=t.e;
+ for(let i=0;i<n;i++){const a=P[(i+n-1)%n],b=P[i],c=P[(i+1)%n],d=P[(i+2)%n];
+  const m=Math.max(6,Math.hypot(c[0]-b[0],c[1]-b[1])/4|0);for(let k=0;k<m;k++){const s=k/m,s2=s*s,s3=s2*s;
+   C.push([0,1].map(j=>.5*(2*b[j]+(-a[j]+c[j])*s+(2*a[j]-5*b[j]+4*c[j]-d[j])*s2+(-a[j]+3*b[j]-3*c[j]+d[j])*s3)))}}
+ const N=C.length;t.C=C;t.N=N;t.tr=[];t.bt=[];t.sp=[];t.ld=[];t.len=C.reduce((a,p,i)=>a+Math.hypot(p[0]-C[(i+1)%N][0],p[1]-C[(i+1)%N][1]),0);
+ t.T=C.map((p,i)=>{const q=C[(i+1)%N],r=C[(i+N-1)%N],dx=q[0]-r[0],dy=q[1]-r[1],l=Math.hypot(dx,dy)||1;return[dx/l,dy/l]});
+ const o=document.createElement('canvas');o.width=W;o.height=H;const x=o.getContext('2d');
+ let s=7;const rnd=()=>(s=s*16807%2147483647)/2147483647;
+ const path=()=>{x.beginPath();C.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.closePath()};
+ const md=(a,b)=>Math.sqrt(Math.min(...C.map(p=>(p[0]-a)**2+(p[1]-b)**2)));
+ x.lineJoin='round';x.lineCap='round';
+ if(e==0){x.fillStyle='#1b6fb0';x.fillRect(0,0,W,H);x.fillStyle='#3d93d6';for(let k=0;k<420;k++)x.fillRect(rnd()*W,rnd()*H,5,1);
+  path();x.lineWidth=(HW+46)*2;x.strokeStyle='#d8c9a0';x.stroke()}
+ else if(e==1){x.fillStyle='#454957';x.fillRect(0,0,W,H)}
+ else{x.fillStyle='#0d5c3a';x.fillRect(0,0,W,H);x.strokeStyle='#22a06b';x.lineWidth=2;
+  for(let k=0;k<60;k++){const a=rnd()*W|0,b=rnd()*H|0,l=30+rnd()*90|0,hz=rnd()<.5;t.tr.push([a,b,l,hz]);x.beginPath();x.moveTo(a,b);hz?x.lineTo(a+l,b):x.lineTo(a,b+l);x.stroke();x.fillStyle='#e0b84a';x.beginPath();x.arc(a,b,2.6,0,7);x.fill()}}
+ path();x.lineWidth=HW*2+20;x.strokeStyle=['#fff','#b8bcc8','#e0c24a'][e];x.stroke();
+ x.setLineDash([7,7]);x.strokeStyle=['#d92b3a','#2a2d38','#111'][e];x.stroke();x.setLineDash([]);
+ path();x.lineWidth=HW*2+14;x.strokeStyle='#7a7d8c';x.stroke();
+ path();x.lineWidth=HW*2+7;x.strokeStyle='#d92b3a';x.stroke();x.setLineDash([6,6]);x.strokeStyle='#fff';x.stroke();x.setLineDash([]);
+ path();x.lineWidth=HW*2;x.strokeStyle='#9c9fb2';x.stroke();
+ x.setLineDash([5,9]);x.lineWidth=1;x.strokeStyle='#c9cbd9';path();x.stroke();x.setLineDash([]);
+ const bld=(a,b)=>{const w=12+rnd()*10|0,h=12+rnd()*10|0,B=BC[e];x.fillStyle='rgba(0,0,0,.35)';x.fillRect(a-w/2+3,b-h/2+3,w,h);x.fillStyle=B[rnd()*6|0];x.fillRect(a-w/2,b-h/2,w,h);x.fillStyle='rgba(255,255,255,.25)';x.fillRect(a-w/2+2,b-h/2+2,w-4,3);x.fillStyle='#333';x.fillRect(a-2,b-1,4,3);if(e==1&&rnd()<.35)t.ld.push([a+w/2-3,b-h/2+3,rnd()*6])};
+ const chip=(a,b)=>{if(rnd()<.5){const w=14+rnd()*8|0,h=10+rnd()*6|0;x.fillStyle='#d8c24a';for(let j=0;j<w;j+=4){x.fillRect(a-w/2+j,b-h/2-2,2,2);x.fillRect(a-w/2+j,b+h/2,2,2)}x.fillStyle='#15171c';x.fillRect(a-w/2,b-h/2,w,h);x.fillStyle='#666';x.fillRect(a-w/2+2,b-h/2+2,3,3)}
+  else{x.fillStyle='#aaa';x.fillRect(a-12,b-.5,24,1);x.fillStyle='#e2c58f';x.fillRect(a-8,b-3,16,6);x.fillStyle='#8b4a1f';x.fillRect(a-5,b-3,2,6);x.fillStyle='#111';x.fillRect(a-1,b-3,2,6);x.fillStyle='#d92b3a';x.fillRect(a+3,b-3,2,6)}};
+ for(let k=0;k<(e==1?1600:1100);k++){const a=rnd()*W,b=rnd()*H,d=md(a,b);
+  if(e==0){if(d>HW+22&&d<HW+34)bld(a,b);else if(d>HW+62&&rnd()<.03){x.fillStyle='#fff';x.beginPath();x.ellipse(a,b,10,4,rnd()*3,0,7);x.fill();x.fillStyle='#e0524e';x.fillRect(a-2,b-1,4,2)}}
+  else if(d>HW+22)e==1?bld(a,b):chip(a,b)}
+ const wet=(a,b)=>a>20&&a<W-20&&b>20&&b<H-20&&md(a,b)>HW+62;
+ if(e==0){for(let k=0;k<400&&t.bt.length<10;k++){const a=rnd()*W,b=rnd()*H,an=rnd()*6.28,L=90+rnd()*110;let ok=1;
+  for(let j=0;j<=8;j++)if(!wet(a+Math.cos(an)*L*j/8,b+Math.sin(an)*L*j/8)){ok=0;break}
+  if(ok)t.bt.push({a,b,an,L,sp:10+rnd()*14,ph:rnd()*9,c:['#e0524e','#f2c14e','#4ea0e0'][k%3]})}
+  for(let k=0;k<400&&t.sp.length<90;k++){const a=rnd()*W,b=rnd()*H;if(md(a,b)>HW+50)t.sp.push([a,b,rnd()*6])}}
+ if(e==2)t.tr=t.tr.filter(r=>{const[a,b,l,hz]=r;for(let j=0;j<=l;j+=6)if(md(hz?a+j:a,hz?b:b+j)<HW+14)return false;return true});
+ const p=C[0],tg=t.T[0];x.save();x.translate(p[0],p[1]);x.rotate(Math.atan2(tg[1],tg[0]));
+ for(let j=-HW;j<HW;j+=3)for(let r=0;r<2;r++){x.fillStyle=((j+HW)/3+r)%2?'#fff':'#111';x.fillRect(r*3-3,j,3,3)}
+ x.restore();t.bg=o}
+TRACKS.forEach(build);
+
+/* state */
+let S,R=null;const K={1:{l:0,r:0,b:0},2:{l:0,r:0,b:0}},P={1:{l:0,r:0,b:0},2:{l:0,r:0,b:0}};
+const SK='erc_save';let SV={};try{SV=JSON.parse(localStorage.getItem(SK))||{}}catch(e){}
+SV=Object.assign({coins:100,own:[],skin:'s_std',fx:'f_fl',best:0,wins:0,races:0,champ:0},SV);['s_std','f_fl'].forEach(i=>SV.own.includes(i)||SV.own.push(i));
+const save=()=>{try{localStorage.setItem(SK,JSON.stringify(SV))}catch(e){}},best=()=>SV.best;
+const mkp=()=>({money:100,own:{eng:0,han:0,tur:0,ecu:0},unl:{eng:0,han:0,tur:0,ecu:0},used:{eng:[],han:[],tur:[],ecu:[]},pen:0,right:0,tot:0});
+function newGame(m){S={mode:m,race:0,cur:0,dl:0,p:[mkp(),mkp()],pts:[0,0,0,0],names:[]}}
+function show(h,t){$('#ex').hidden=!!t;disarm();R&&(R.on=0);$('#race').hidden=true;const u=$('#ui');u.hidden=false;u.innerHTML=h;scrollTo(0,0)}
+const tm=()=>S.dl?`<span class="warn">⏱ <span id="tm">${Math.max(0,Math.ceil((S.dl-Date.now())/1000))}s</span></span>`:'';
+setInterval(()=>{if(S&&S.dl){const t=Math.ceil((S.dl-Date.now())/1000),e=$('#tm');if(e)e.textContent=Math.max(0,t)+'s';if(t<=0)pitDone()}},250);
+
+function title(){newGame(1);show(`<h1>ELECTRONIC<br>RACING<br>CHAMPIONSHIP</h1><p class="dim">3 RACES · HARBOUR, CITY AND PCB CIRCUITS</p>
+<p>Answer electronics questions in the Pit Lab to upgrade your car, then race.<br><span style="color:var(--gr)">✔ CORRECT</span> = cash and an upgrade unlocked. <span style="color:var(--rd)">✘ WRONG</span> = you start the race late.<br>
+Stay on the track! 3 track limit warnings, then a heavy slowdown. Barriers hurt. Qualifying sets your grid slot. Upgrades reset every race and race winnings go to your store coins.</p>
+<p class="dim">Topics: voltage, resistors, series circuits, breadboards, PCBs and PICAXE.</p>
+<p class="blink">▶ CHOOSE YOUR MODE ◀</p>
+<div class="row"><button class="btn go" onclick="newGame(1);pit()">1 PLAYER</button><button class="btn" style="background:#6a2fb0" onclick="newGame(2);pit()">2 PLAYERS · SAME SCREEN</button><button class="btn" style="background:#b8860b" onclick="store()">STORE · 🪙 ${SV.coins}</button></div>
+<p class="dim">2 PLAYERS: each player gets ${PIT}s in the Pit Lab before every race.<br>BEST (1P): ${best()} PTS</p>`,1)}
+function pit(){S.cur=0;S.p=S.p.map(p=>({...mkp(),used:p.used,right:p.right,tot:p.tot}));dl();garage()}
+function dl(){S.dl=S.mode==2?Date.now()+PIT*1000:0}
+function pitDone(){S.dl=0;if(S.mode==2&&S.cur==0){S.cur=1;show(`<h1>PLAYER 2</h1><p>Pass the device to Player 2.<br>You get ${PIT} seconds in the Pit Lab.</p><button class="btn go big" onclick="dl();garage()">I’M READY ▶</button>`)}else qual()}
+
+function garage(){
+ const T=TRACKS[S.race],p=S.p[S.cur];
+ let h=`<div class="hd"><span>${S.mode==2?'PLAYER '+(S.cur+1)+' · ':''}RACE ${S.race+1}/3</span><span>${tm()} $${p.money}</span></div><h2>PIT LAB</h2><p class="dim">NEXT: ${T.n} · UPGRADES RESET EVERY RACE</p>`;
+ if(p.pen)h+=`<p class="warn">⚠ PENALTY: YOU START ${p.pen.toFixed(1)}s LATE</p>`;
+ h+='<div class="cards">';
+ CATS.forEach(c=>{const o=p.own[c.k],u=p.unl[c.k],cost=COST[o];
+  h+=`<div class="card"><b>${c.n}</b> <i>${c.t}</i><br><span class="dim">${c.d}</span><div class="pips">${[0,1,2].map(i=>`<s class="${i<o?'on':i<u?'ul':''}"></s>`).join('')}</div><div class="row">`+
+  (u<3?`<button class="btn" onclick="ask('${c.k}')">ANSWER A QUESTION</button>`:'')+
+  (u>o?`<button class="btn go" onclick="buy('${c.k}')" ${p.money<cost?'disabled':''}>BUY LV${o+1} · $${cost}</button>`:'')+
+  (o==3?'<span style="color:var(--gr)">MAX LEVEL</span>':'')+`</div></div>`});
+ show(h+`</div><button class="btn go big" onclick="pitDone()">${S.mode==2?'DONE ▶':'START RACE ▶'}</button>`)}
+function buy(k){const p=S.p[S.cur],o=p.own[k];if(p.money<COST[o]||p.unl[k]<=o)return;p.money-=COST[o];p.own[k]++;[392,523,784].forEach((f,i)=>beep(f,.1,'square',.05,i*.07));garage()}
+
+let Q;
+function ask(k){const c=CATS.find(x=>x.k==k),p=S.p[S.cur];let u=p.used[k];if(u.length>=c.pool.length)u=p.used[k]=[];
+ let i;do i=Math.random()*c.pool.length|0;while(u.includes(i));u.push(i);
+ Q={c,q:c.pool[i],o:shuf([1,2,3,4]),sel:-1};qscreen()}
+function qscreen(){const{c,q,o,sel}=Q,p=S.p[S.cur];
+ let h=`<div class="hd"><span>${c.n} · ${c.t}</span><span>${tm()} $${p.money}</span></div><p style="font-size:1.25em;line-height:1.9;margin:18px 0 8px">${q[0]}</p>`;
+ o.forEach((n,j)=>{const cl=sel<0?'':n==1?'ok':j==sel?'bad':'';h+=`<button class="btn opt ${cl}" ${sel>=0?'disabled':''} onclick="ans(${j})">${q[n]}</button>`});
+ if(sel>=0){h+=o[sel]==1?`<p style="color:var(--gr)">✔ CORRECT! +$100<br>${c.n} LV${p.unl[c.k]} UNLOCKED${p.unl[c.k]>p.own[c.k]?' · BUY IT IN THE PIT LAB':''}</p>`:`<p class="warn">✘ WRONG! +0.2s START PENALTY</p>`;
+  h+=`<p class="dim">${q[5]}</p><button class="btn go big" onclick="garage()">CONTINUE ▶</button>`}
+ show(h)}
+function ans(j){if(Q.sel>=0)return;Q.sel=j;const p=S.p[S.cur],k=Q.c.k;p.tot++;
+ if(Q.o[j]==1){p.right++;p.money+=100;p.unl[k]=Math.min(3,p.unl[k]+1);[523,659,784,1047].forEach((f,i)=>beep(f,.1,'square',.05,i*.07))}
+ else{p.pen=Math.min(2,Math.round((p.pen+.2)*10)/10);beep(150,.2,'sawtooth',.07);beep(110,.35,'sawtooth',.07,.18)}
+ qscreen()}
+
+/* race */
+function startRace(qpn){
+ const T=TRACKS[S.race],N=T.N,m=S.mode,aiMax=70+S.race*9,an=['VOLT-A','OHM-ER','WATT-S'],cl=['#3b82f6','#facc15','#22c55e'];
+ const cars=[0,1,2,3].map(i=>{const pn=i==3?1:i==2&&m==2?2:0,sl=qpn?0:S.grid.indexOf(i),idx=N-4-sl*5,t=T.T[idx],o=sl%2?8:-8;
+  const c={id:i,pn,name:pn?(m==2?'P'+pn:'YOU'):an[i],col:pn?(pn==1?'#ff3b4e':'#b25cff'):cl[i],idx,wraps:0,fin:0,d:0,v:0,off:o,boostT:0,warn:0,out:0,slow:0,mt:0,msg:'',
+   x:T.C[idx][0]-t[1]*o,y:T.C[idx][1]+t[0]*o,a:Math.atan2(t[1],t[0]),max:aiMax+[6,0,-6,0][i]+Math.random()*4};
+  if(pn){const p=S.p[pn-1],L=p.own;Object.assign(c,{skin:pn==1?SV.skin:'s_std',fx:pn==1?SV.fx:'f_fl',max:80+L.eng*14,acc:70+L.eng*18,hl:L.han,bl:1.2+.5*L.ecu,boost:1+L.tur,pen:qpn?0:p.pen});if(!qpn)p.pen=0}
+  return c}).filter(c=>!qpn||c.pn==qpn);
+ if(!qpn)S.names=cars.map(c=>c.name);
+ R={T,cars,pt:[],pc:0,q:qpn,laps:qpn?1:LAPS,hum:cars.filter(c=>c.pn),t:-3,time:0,order:[],mode:0,cd:9,go:0,on:1,nf:0};
+ $('#ui').hidden=true;$('#race').hidden=false;$('#pad2').hidden=m!=2;document.activeElement.blur();
+ [1,2].forEach(n=>{K[n].l=K[n].r=K[n].b=P[n].l=P[n].r=P[n].b=0});setB();
+ $('#hint').textContent=m==2?'P1: A/D STEER · S BRAKE · W BOOST      P2: ←/→ STEER · ↓ BRAKE · ↑ BOOST':'ARROWS OR A/D STEER · ↓ OR S BRAKE · SPACE OR ↑ BOOST';
+ let last=performance.now();
+ const loop=ts=>{if(!R||!R.on)return;const dt=Math.min(.05,(ts-last)/1000||0);last=ts;update(dt);draw();requestAnimationFrame(loop)};
+ requestAnimationFrame(loop)}
+const key=c=>c.fin?1e6-c.fin:c.wraps*R.T.N+c.idx;
+function setB(){R.hum.forEach(c=>{const b=$('#b'+c.pn);if(b)b.textContent='BOOST x'+c.boost})}
+function boost(n){const c=R&&R.on&&R.time>=0&&R.cars.find(x=>x.pn==n&&!x.auto);if(c&&c.boost>0&&c.boostT<=0){c.boost--;c.boostT=c.bl*SC;setB();beep(260,.35,'sawtooth',.06)}}
+
+function step(c,dt){
+ const T=R.T,C=T.C,N=T.N,pl=c.pn&&!c.auto,hold=pl&&R.time<c.pen;
+ let st=0,br=0,mx,turn;
+ if(pl){const k=K[c.pn],p=P[c.pn];st=(k.r|p.r)-(k.l|p.l);br=k.b|p.b;turn=2.5+c.hl*.35;mx=c.max}
+ else{const j=(c.idx+9)%N,q=C[j],n=T.T[j],tx=q[0]-n[1]*c.off,ty=q[1]+n[0]*c.off,da=ad(Math.atan2(ty-c.y,tx-c.x),c.a);
+  st=clamp(da*3,-1,1);turn=3.4;mx=c.max*(1-Math.min(.3,Math.abs(da)*.45));
+  const h=R.hum[0],d=(key(c)-key(h))/N;if(!h.fin){if(d>.3)mx*=.9;else if(d<-.3)mx*=1.06}}
+ if(c.boostT>0){c.boostT-=dt;mx*=1.4}
+ if(c.d>HW+2)mx*=c.pn?.55+.05*c.hl:.8;
+ if(c.slow>0){c.slow-=dt;mx*=.3}
+ if(hold){c.v=0}else{
+  if(c.v<mx)c.v+=(c.acc||90)*dt*(c.boostT>0?2.2:1);else c.v-=(c.slow>0?220:70)*dt;
+  if(br)c.v-=170*dt;
+  c.v=Math.max(0,c.v*(1-Math.abs(st)*.2*dt));
+  c.a+=st*turn*(.35+.65*Math.min(1,c.v/60))*dt;
+  c.x=clamp(c.x+Math.cos(c.a)*c.v*dt,4,W-4);c.y=clamp(c.y+Math.sin(c.a)*c.v*dt,4,H-4)}
+ const old=c.idx;let b=1e9,bi=old;
+ for(let k=-8;k<=25;k++){const i=(old+k+N)%N,d=(C[i][0]-c.x)**2+(C[i][1]-c.y)**2;if(d<b){b=d;bi=i}}
+ c.d=Math.sqrt(b);c.idx=bi;
+ if(c.d>HW+7.5){const q=C[bi],k=(HW+7.5)/c.d;c.x=q[0]+(c.x-q[0])*k;c.y=q[1]+(c.y-q[1])*k;if(c.v>30)c.hit=1;c.v*=.85;c.d=HW+7.5}
+ if(c.pn){const out=c.d>HW+3.5;
+  if(out&&!c.out){c.out=1;c.warn++;c.mt=100;c.msg=c.warn>3?'HEAVY SLOWDOWN!':'TRACK LIMITS '+c.warn+'/3';beep(c.warn>3?110:220,.2,'square',.06);if(c.warn>3)c.slow=4*SC}
+  else if(!out)c.out=0}
+ if(old>N*.75&&bi<N*.25){c.wraps++;if(c.wraps==1)c.t0=R.time}else if(old<N*.25&&bi>N*.75)c.wraps--;
+ if(c.wraps>R.laps&&!c.fin){c.fin=R.time;R.order.push(c);
+  if(c.pn){c.auto=1;c.off=0;c.max=95;c.slow=0;if(++R.nf==R.hum.length){R.mode=1;R.end=R.time+1.6}[523,659,784,1047].forEach((f,i)=>beep(f,.12,'square',.05,i*.1))}}}
+
+function update(dt){
+ R.t+=dt;
+ if(R.t<0){const cd=Math.ceil(-R.t);if(cd!==R.cd){R.cd=cd;beep(440,.15)}return}
+ if(!R.go){R.go=1;beep(880,.45)}
+ R.time=R.t;R.cars.forEach(c=>{step(c,dt*SC);fxs(c)});R.pt=R.pt.filter(p=>{p.l-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;return p.l>0});
+ const nc=R.cars.length;for(let i=0;i<nc;i++)for(let j=i+1;j<nc;j++){const a=R.cars[i],b=R.cars[j],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
+  if(d<11&&d>0){const o=(11-d)/2,nx=dx/d,ny=dy/d;a.x-=nx*o;a.y-=ny*o;b.x+=nx*o;b.y+=ny*o;a.v*=.985;b.v*=.985}}
+ if(R.mode==1&&R.time>R.end){R.on=0;finishRace()}}
+
+/* store, skins and effects */
+const ITEMS=[
+{id:'s_std',t:'s',n:'STOCK RED',r:0,free:1,d:'Factory colours'},
+{id:'s_res',t:'s',n:'RESISTOR',r:0,d:'Brown, black, red = 1 kΩ'},
+{id:'s_pcb',t:'s',n:'PCB RACER',r:1,d:'Copper tracks join the parts'},
+{id:'s_led',t:'s',n:'LED GLOW',r:1,d:'Do not forget the resistor!'},
+{id:'s_pic',t:'s',n:'PICAXE CHIP',cs:1,r:2,d:'The brain of your car'},
+{id:'s_bre',t:'s',n:'BREADBOARD',r:2,d:'Build it without solder'},
+{id:'s_gold',t:'s',n:'GOLD CONTACT',cs:1,r:3,d:'Gold-plated connectors'},
+{id:'s_cap',t:'s',n:'CAPACITOR',cs:1,r:0,d:'Stores charge, then releases it'},
+{id:'s_sol',t:'s',n:'SOLDER BLOB',cs:1,r:0,d:'Joins parts together'},
+{id:'s_dio',t:'s',n:'DIODE',cs:1,r:1,d:'Current flows one way only'},
+{id:'s_trn',t:'s',n:'TRANSISTOR',cs:1,r:1,d:'An electronic switch'},
+{id:'f_fl',t:'f',n:'FLAME',r:0,free:1,d:'Hot exhaust'},
+{id:'f_ohm',t:'f',n:'OHM TRAIL',r:0,d:'Ω, V and A symbols'},
+{id:'f_bin',t:'f',n:'BINARY CODE',r:1,d:'Digital 0s and 1s'},
+{id:'f_spk',t:'f',n:'ELECTRIC ARC',r:1,d:'High voltage sparks'},
+{id:'f_led',t:'f',n:'LED CHASE',cs:1,r:2,d:'Flashing LED colours'},
+{id:'f_res',t:'f',n:'COLOUR CODE',cs:1,r:3,d:'The resistor colour code'},
+{id:'f_smk',t:'f',n:'SOLDER SMOKE',cs:1,r:0,d:'Careful, it is hot!'},
+{id:'f_amp',t:'f',n:'ELECTRON FLOW',cs:1,r:1,d:'Current is a flow of charge'}];
+const RAR=[['COMMON','#9aa0b4',80,55],['RARE','#3d8bff',180,28],['EPIC','#b25cff',350,13],['LEGENDARY','#ffb020',700,4]];
+const FX={f_smk:{c:['#9aa0b4','#c9cdd8','#6b7080'],s:3,l:.7,j:14},f_amp:{c:['#3df5ff','#9ff0ff'],s:2,l:.45,j:16},f_fl:{c:['#ff9d00','#ffd34d','#ff5a1f'],s:2,l:.25,j:12},f_ohm:{ch:'ΩVA',c:['#ffe14d'],s:7,l:.6,j:8},f_bin:{ch:'01',c:['#5dff7a'],s:7,l:.6,j:8},f_spk:{c:['#fff7a0','#7ad7ff'],s:1,l:.3,j:40},f_led:{cyc:1,c:['#ff3b4e','#5dff7a','#3db4ff','#ffe14d'],s:3,l:.5,j:10},f_res:{cyc:1,c:['#8b4a1f','#111','#d92b3a','#ff9d00','#ffe14d','#22c55e','#3b82f6','#a855f7'],s:3,l:.55,j:10}};
+function paintSkin(id,col,x){const f=(c,a,b,w,h)=>{x.fillStyle=c;x.fillRect(a,b,w,h)};
+ if(id=='s_res'){f('#e2c58f',-6,-3,12,6);f('#8b4a1f',-4,-3,2,6);f('#111',-1,-3,2,6);f('#d92b3a',2,-3,2,6)}
+ else if(id=='s_pcb'){f('#0f7a4a',-6,-3,12,6);f('#e0b84a',-5,-2,9,1);f('#e0b84a',-5,1,5,1);f('#e0b84a',3,0,2,2)}
+ else if(id=='s_led'){f('rgba(255,70,90,.35)',-8,-5,16,10);f('#ff3050',-6,-3,12,6);f('#ffd0d6',-4,-2,6,2)}
+ else if(id=='s_pic'){f('#15171c',-6,-3,12,6);[-5,-2,1].forEach(i=>{f('#ccc',i,-4,1,1);f('#ccc',i,3,1,1)});f('#666',-5,-2,2,2)}
+ else if(id=='s_bre'){f('#f1f1ee',-6,-3,12,6);f('#d92b3a',-6,-3,12,1);f('#3b82f6',-6,2,12,1);for(let i=-5;i<5;i+=2){f('#999',i,-1,1,1);f('#999',i,1,1,1)}}
+ else if(id=='s_gold'){f('#e8b923',-6,-3,12,6);f('#fff3a0',-5,-2,8,1);f('#a8780f',-6,2,12,1)}
+ else if(id=='s_cap'){f('#2a4fa0',-6,-3,12,6);f('#c9ced9',-6,-3,2,6);f('#fff',-3,-1,6,2)}
+ else if(id=='s_sol'){f('#b8bcc8',-6,-3,12,6);f('#e6e8ee',-4,-2,5,2);f('#8b8f9c',1,0,4,3)}
+ else if(id=='s_dio'){f('#15171c',-6,-3,12,6);f('#d8dbe3',3,-3,2,6)}
+ else if(id=='s_trn'){f('#15171c',-6,-3,12,6);[-2,0,2].forEach(y=>f('#e0b84a',-5,y,1,1));f('#444',0,-2,5,4)}
+ else{f(col,-6,-3,12,6);f('#fff',-6,-1,12,1)}}
+function icon(it,c){const x=c.getContext('2d');x.fillStyle='#0d0820';x.fillRect(0,0,128,64);
+ if(it.t=='s'){x.save();x.translate(64,32);x.scale(6,6);x.fillStyle='#111';[[-5,-4],[-5,3],[3,-4],[3,3]].forEach(w=>x.fillRect(w[0],w[1],3,2));paintSkin(it.id,'#ff3b4e',x);x.fillStyle='#bfeaff';x.fillRect(0,-2,3,4);x.restore()}
+ else{const f=FX[it.id];for(let i=0;i<9;i++){x.globalAlpha=1-i/10;x.fillStyle=f.c[i%f.c.length];const px=100-i*11,py=32+Math.sin(i*1.7)*f.j/3;if(f.ch){x.font='10px monospace';x.fillText(f.ch[i%f.ch.length],px,py+4)}else x.fillRect(px,py,f.s*2.5,f.s*2.5)}x.globalAlpha=1;x.fillStyle='#ff3b4e';x.fillRect(108,26,16,12)}}
+function fxs(c){const f=FX[c.fx||'f_fl'],r=Math.random,s=Math.sin(c.a),k=Math.cos(c.a),n=f.c.length;
+ if(c.boostT>0)for(let i=0;i<2;i++){R.pc++;R.pt.push({x:c.x-k*7,y:c.y-s*7,vx:-k*40+(r()-.5)*f.j,vy:-s*40+(r()-.5)*f.j,l:f.l,m:f.l,c:f.c[(f.cyc?R.pc:r()*n)%n|0],s:f.s,ch:f.ch&&f.ch[r()*f.ch.length|0]})}
+ if(c.d>HW+2&&c.v>35&&r()<.4)R.pt.push({x:c.x,y:c.y,vx:(r()-.5)*20,vy:(r()-.5)*20,l:.5,m:.5,c:'#c9a96e',s:2});
+ if(c.hit){c.hit=0;for(let i=0;i<5;i++)R.pt.push({x:c.x,y:c.y,vx:(r()-.5)*100,vy:(r()-.5)*100,l:.3,m:.3,c:'#ffcc33',s:2})}}
+function store(y){
+ let h=`<div class="hd"><span>STORE</span><span style="color:var(--yl)">🪙 ${SV.coins} COINS</span></div><h2>CAR LAB SHOP</h2><p class="dim">Win races to earn coins (+100 for a championship win). Skins and effects are used by Player 1.<br>Races won: ${SV.wins} · Championships: ${SV.champ}</p>
+ <div class="card" style="border-color:var(--yl)"><b>ELECTRONICS CASE</b> · 150 COINS<br><span class="dim">Open it for a random CASE-ONLY skin or boost effect (not sold in the shop). Duplicates give 60 coins back.</span><br><button class="btn go" ${SV.coins<150?'disabled':''} onclick="openCase()">OPEN CASE</button></div>`;
+ [['s','CAR SKINS','skin'],['f','BOOST EFFECTS','fx']].forEach(([t,nm,sl])=>{h+=`<h2>${nm}</h2><div class="cards">`;
+  ITEMS.filter(i=>i.t==t).sort((a,b)=>(a.cs|0)-(b.cs|0)).forEach(i=>{const r=RAR[i.r],o=SV.own.includes(i.id),eq=SV[sl]==i.id;
+   h+=`<div class="card" style="border-color:${r[1]};box-shadow:0 0 ${i.r*6}px ${r[1]}88"><canvas class="ic" data-i="${i.id}" width="128" height="64"></canvas><br><b style="color:${r[1]}">${i.n}</b> <span class="dim">${r[0]}</span><br><span class="dim">${i.d}</span><br>`+(eq?'<span style="color:var(--gr)">✔ EQUIPPED</span>':o?`<button class="btn go" onclick="equip('${i.id}')">EQUIP</button>`:i.cs?'<span class="dim">🔒 CASE ONLY</span>':`<button class="btn" ${SV.coins<r[2]?'disabled':''} onclick="buyItem('${i.id}')">BUY · 🪙 ${r[2]}</button>`)+'</div>'});
+  h+='</div>'});
+ show(h+`<button class="btn big" onclick="title()">◀ BACK</button>`);
+ document.querySelectorAll('.ic').forEach(c=>icon(ITEMS.find(i=>i.id==c.dataset.i),c));if(y)scrollTo(0,y)}
+function equip(id){const it=ITEMS.find(i=>i.id==id);SV[it.t=='s'?'skin':'fx']=id;save();beep(660,.08);store(scrollY)}
+function buyItem(id){const it=ITEMS.find(i=>i.id==id),p=RAR[it.r][2];if(SV.coins<p||SV.own.includes(id))return;SV.coins-=p;SV.own.push(id);save();[392,523,784].forEach((f,i)=>beep(f,.1,'square',.05,i*.07));store(scrollY)}
+function openCase(){
+ if(SV.coins<150)return;SV.coins-=150;save();
+ let rr=Math.random()*100,ri=0;while(ri<3&&rr>=RAR[ri][3]){rr-=RAR[ri][3];ri++}
+ const CI=ITEMS.filter(i=>i.cs),pool=CI.filter(i=>i.r==ri),win=pool[Math.random()*pool.length|0],cells=[...Array(50)].map((_,i)=>i==40?win:CI[Math.random()*CI.length|0]);
+ show(`<div class="hd"><span>OPENING CASE...</span><span>🪙 ${SV.coins}</span></div><div id="cs"><div id="pt"></div><div id="st">${cells.map(it=>`<div class="cl" style="border-color:${RAR[it.r][1]}"><canvas data-i="${it.id}" width="128" height="64"></canvas>${it.n}</div>`).join('')}</div></div><div id="rv"></div>`);
+ const dup=SV.own.includes(win.id);if(dup)SV.coins+=60;else SV.own.push(win.id);save();
+ document.querySelectorAll('#st canvas').forEach(c=>icon(ITEMS.find(i=>i.id==c.dataset.i),c));
+ const st=$('#st'),cs=$('#cs'),cw=140,half=cs.clientWidth/2,tg=40*cw+cw/2+(Math.random()-.5)*cw*.6-half,t0=performance.now();let last=-1;
+ const reveal=()=>{const r=RAR[win.r];
+  cs.style.borderColor=r[1];cs.style.boxShadow=`0 0 30px ${r[1]}`;[523,659,784,1047,1319].slice(0,win.r+3).forEach((f,i)=>beep(f,.15,'square',.05,i*.09));
+  $('#rv').innerHTML=`<div class="card pop" style="--c:${r[1]};border-color:${r[1]}"><canvas class="ic" id="wc" width="128" height="64"></canvas><br><b style="color:${r[1]}">${r[0]}</b><br><b>${win.n}</b><br><span class="dim">${win.d}</span><br>${dup?'<span class="warn">DUPLICATE · +60 COINS</span>':'<span style="color:var(--gr)">NEW ITEM!</span>'}</div><div class="row">${dup?'':`<button class="btn go" onclick="equip('${win.id}')">EQUIP IT</button>`}<button class="btn" ${SV.coins<150?'disabled':''} onclick="openCase()">OPEN ANOTHER · 150</button><button class="btn" onclick="store()">BACK TO STORE</button></div>`;icon(win,$('#wc'))};
+ const fr=now=>{if(!st.isConnected)return;const t=Math.min(1,(now-t0)/6500),pos=tg*(1-Math.pow(1-t,4)),ci=Math.floor((pos+half)/cw);
+  st.style.transform=`translateX(${-pos}px)`;if(ci!==last){last=ci;beep(600+ci%3*80,.03,'square',.03)}
+  if(t<1)requestAnimationFrame(fr);else reveal()};
+ requestAnimationFrame(fr)}
+const nm=id=>id==3?(S.mode==2?'P1':'YOU'):id==2&&S.mode==2?'P2':['VOLT-A','OHM-ER','WATT-S'][id];
+function qual(){S.qt={};S.qi=0;S.ql='';qnext()}
+function qnext(){if(S.qi>=S.mode)return grid();const pn=S.qi+1;
+ show(`<h2>QUALIFYING</h2><h1 style="font-size:clamp(16px,2.6vw,26px)">${S.mode==2?'PLAYER '+pn:'YOUR LAP'}</h1>${S.ql}<p>One flying lap, alone on the track. The fastest time starts on pole.<br>${TRACKS[S.race].n}</p><button class="btn go big" onclick="startRace(${pn})">GO ▶</button>`)}
+function qdone(){const c=R.cars[0],t=c.fin-(c.t0||0);S.qt[c.pn]=t;S.ql=`<p style="color:var(--gr)">${nm(c.id)} LAP: ${t.toFixed(2)}s</p>`;S.qi++;qnext()}
+function grid(){const T=TRACKS[S.race],rows=[0,1,2,3].map(i=>{const pn=i==3?1:i==2&&S.mode==2?2:0;return[i,pn?S.qt[pn]:T.len/((70+S.race*9+[6,0,-6,0][i]+Math.random()*4)*SC*.86)+.3+Math.random()*.6]}).sort((a,b)=>a[1]-b[1]);
+ S.grid=rows.map(r=>r[0]);
+ let h=`<h2>STARTING GRID</h2><h1 style="font-size:clamp(16px,2.6vw,26px)">${T.n}</h1><table><tr class="dim"><th>GRID</th><th>DRIVER</th><th>QUALI LAP</th></tr>`;
+ rows.forEach((r,k)=>h+=`<tr class="${r[0]>(S.mode==2?1:2)?'me':''}"><td>${k==0?'POLE':k+1}</td><td>${nm(r[0])}</td><td>${r[1].toFixed(2)}s</td></tr>`);
+ show(h+`</table><button class="btn go big" onclick="startRace()">START RACE ▶</button>`)}
+function drawAnim(t,tm){
+ if(t.e==0){g.fillStyle='#bfe6ff';t.sp.forEach(s=>{g.globalAlpha=.25+.35*Math.sin(tm*2+s[2]);g.fillRect(s[0],s[1],5,1)});g.globalAlpha=1;
+  t.bt.forEach(o=>{const w=tm*o.sp/o.L*3.1416+o.ph,u=(Math.sin(w)+1)/2,h=o.an+(Math.cos(w)>0?0:3.1416),x=o.a+Math.cos(o.an)*o.L*u,y=o.b+Math.sin(o.an)*o.L*u;
+   for(let i=1;i<5;i++){g.fillStyle=`rgba(255,255,255,${.5-i*.1})`;g.fillRect(x-Math.cos(h)*i*6,y-Math.sin(h)*i*6,3,2)}
+   g.save();g.translate(x,y);g.rotate(h);g.fillStyle='#fff';g.beginPath();g.ellipse(0,0,11,4,0,0,7);g.fill();g.fillStyle=o.c;g.fillRect(-3,-2,6,4);g.restore()})}
+ if(t.e==1)t.ld.forEach(l=>{g.fillStyle=Math.sin(tm*3+l[2])>0?'#ff4d5e':'#552';g.fillRect(l[0],l[1],2,2)});
+ if(t.e==2)t.tr.forEach((r,k)=>{const p=(tm*45+k*53)%(r[2]+30),hz=r[3];g.fillStyle=Math.sin(tm*2+k)>.3?'#ff5a5a':'#5a1a1a';g.fillRect(r[0]-1,r[1]-1,3,3);
+  if(p<=r[2]){const x=hz?r[0]+p:r[0],y=hz?r[1]:r[1]+p;g.fillStyle='#9dffb8';g.fillRect(x-1,y-1,3,3);g.globalAlpha=.4;g.fillRect(hz?x-7:x-1,hz?y-1:y-7,hz?6:3,hz?3:6);g.globalAlpha=1}})}
+function drawSky(t,tm){if(t.e==2)return;g.fillStyle='rgba(0,0,0,.14)';
+ for(let k=0;k<3;k++){g.beginPath();g.ellipse((tm*9+k*260)%(W+240)-120,70+k*110+Math.sin(tm*.3+k)*18,70,26,0,0,7);g.fill()}
+ if(t.e==1){const x=W/2+Math.cos(tm*.25)*230,y=H/2+Math.sin(tm*.37)*110,a=tm*30;g.fillStyle='rgba(0,0,0,.25)';g.fillRect(x+10,y+14,16,6);g.fillStyle='#e8ecf4';g.fillRect(x-8,y-3,16,7);g.fillStyle='#e0524e';g.fillRect(x+8,y-1,10,2);
+  g.strokeStyle='#222';g.lineWidth=1.5;g.beginPath();g.moveTo(x-Math.cos(a)*16,y-Math.sin(a)*16);g.lineTo(x+Math.cos(a)*16,y+Math.sin(a)*16);g.stroke()}}
+function txt(s,x,y,sz,col,al='center'){g.font=sz*1.4+'px "Press Start 2P",monospace';g.textAlign=al;g.fillStyle=col;g.fillText(s,x,y)}
+function drawCar(c){g.save();g.translate(c.x,c.y);g.rotate(c.a);g.scale(1.3,1.3);
+ g.fillStyle='rgba(0,0,0,.3)';g.fillRect(-5,-2,12,7);
+ if(c.boostT>0){g.fillStyle='rgba(255,255,255,.25)';g.fillRect(-8,-5,16,10)}
+ if(c.slow>0){g.fillStyle='#888';g.fillRect(-9,-3,3,2);g.fillRect(-12,1,3,2)}
+ g.fillStyle='#111';[[-5,-4],[-5,3],[3,-4],[3,3]].forEach(w=>g.fillRect(w[0],w[1],3,2));
+ paintSkin(c.skin,c.col,g);
+ g.fillStyle='#bfeaff';g.fillRect(0,-2,3,4);g.fillStyle='#222';g.fillRect(5,-2,1,4);g.restore()}
+function draw(){
+ g.drawImage(R.T.bg,0,0);drawAnim(R.T,performance.now()/1000);R.pt.forEach(p=>{g.globalAlpha=Math.max(0,p.l/p.m);if(p.ch)txt(p.ch,p.x,p.y,p.s,p.c);else{g.fillStyle=p.c;g.fillRect(p.x,p.y,p.s,p.s)}});g.globalAlpha=1;
+ [...R.cars].sort((a,b)=>a.y-b.y).forEach(drawCar);const tm=performance.now()/1000;drawSky(R.T,tm);
+ if(R.time<1.8&&Math.floor(tm*5)%2)R.hum.forEach(c=>{g.fillStyle=c.pn==1?'#e0243a':'#8a3fd8';g.fillRect(c.x-17,c.y-36,34,17);g.beginPath();g.moveTo(c.x-6,c.y-19);g.lineTo(c.x+6,c.y-19);g.lineTo(c.x,c.y-12);g.fill();txt('P'+c.pn,c.x,c.y-23,8,'#fff')});
+ g.fillStyle='rgba(0,0,0,.65)';g.fillRect(0,0,W,6+R.hum.length*15);
+ R.hum.forEach((c,i)=>{const pos=1+R.cars.filter(o=>key(o)>key(c)).length;
+  txt(`${c.name} LAP ${clamp(c.wraps,1,R.laps)}/${R.laps} ${R.q?'QUALI':'POS '+pos+'/4'} TL ${Math.min(c.warn,3)}/3`,4,12+i*15,8,c.warn>3?'#ff4d5e':c.warn?'#ffb020':'#fff','left')});
+ txt(fmt(R.time),W-4,12,8,'#fff','right');
+ R.hum.forEach((c,i)=>{if(c.mt>0){c.mt--;g.globalAlpha=Math.min(1,c.mt/25);txt(c.msg,W/2,48+i*14-(100-c.mt)/20,9,c.warn>3?'#ff4d5e':'#ffb020');g.globalAlpha=1}});
+ if(R.t<0){const n=Math.ceil(-R.t);for(let i=0;i<3;i++){g.fillStyle=i<4-n?'#ff2a2a':'#401010';g.beginPath();g.arc(W/2-24+i*24,100,9,0,7);g.fill()}txt('GET READY',W/2,128,10,'#ffe14d')}
+ else if(R.time<.9){g.globalAlpha=Math.min(1,(.9-R.time)*3);txt('GO!',W/2,H/2,28+R.time*40,'#5dff7a');g.globalAlpha=1}
+ R.hum.forEach((c,i)=>{if(R.mode==0&&R.time<c.pen)txt(c.name+' PENALTY HOLD '+(c.pen-R.time).toFixed(1)+'s',W/2,H/2+16+i*12,8,'#ff4d5e')});
+ if(R.mode==1)txt('FINISH!',W/2,H/2,24,'#ffe14d')}
+
+function finishRace(){if(R.q)return qdone();
+ const rest=R.cars.filter(c=>!R.order.includes(c)).sort((a,b)=>key(b)-key(a)),fin=[...R.order,...rest];
+ fin.forEach((c,r)=>S.pts[c.id]+=PTS[r]);
+ let h=`<h2>${TRACKS[S.race].n}</h2><h1 style="font-size:clamp(16px,2.6vw,26px)">RACE RESULT</h1>`;
+ fin.forEach((c,r)=>{if(c.pn){h+=`<p>${c.name}: ${['1ST','2ND','3RD','4TH'][r]} · TIME ${fmt(c.fin)}${c.warn?` · ${c.warn} WARNINGS`:''}</p>`}});
+ const bp=fin.findIndex(c=>c.pn),cn=[60,35,20,10][bp];SV.coins+=cn;SV.races++;if(bp==0)SV.wins++;save();h+=`<p style="color:var(--yl)">🪙 +${cn} COINS ADDED TO YOUR INVENTORY (${SV.coins} TOTAL)</p>`;
+ h+=`<table><tr class="dim"><th>POS</th><th>DRIVER</th><th>+PTS</th><th>TOTAL</th></tr>`;
+ fin.forEach((c,r)=>h+=`<tr class="${c.pn?'me':''}"><td>${r+1}</td><td>${c.name}</td><td>+${PTS[r]}</td><td>${S.pts[c.id]}</td></tr>`);
+ show(h+`</table>`+(S.race<2?`<button class="btn go big" onclick="S.race++;pit()">TO THE PIT LAB ▶</button>`:`<button class="btn go big" onclick="final()">FINAL RESULTS ▶</button>`))}
+
+function final(){
+ const m=S.mode,rows=S.pts.map((p,i)=>[S.names[i],p,i]).sort((a,b)=>b[1]-a[1]),w=rows[0],hw=m==2?w[2]>1:w[2]==3;
+ if(m==1&&S.pts[3]>SV.best)SV.best=S.pts[3];if(hw){SV.coins+=100;SV.champ++}save();
+ let h=`<h1>${hw?(m==2?w[0]+' WINS!':'🏆 CHAMPION!'):'GAME OVER'}</h1><p>${hw?'Great racing and great electronics knowledge! +100 COIN BONUS!':'The AI took the title. Upgrade smarter and try again!'}</p><table><tr class="dim"><th>POS</th><th>DRIVER</th><th>POINTS</th></tr>`;
+ rows.forEach((r,i)=>h+=`<tr class="${r[2]>(m==2?1:2)?'me':''}"><td>${i+1}</td><td>${r[0]}</td><td>${r[1]}</td></tr>`);
+ h+=`</table><div class="card"><b>QUIZ SCORES</b><br>${S.p.slice(0,m).map((p,i)=>`${m==2?'P'+(i+1):'YOU'}: ${p.right} / ${p.tot} correct`).join('<br>')}</div><button class="btn go big" onclick="newGame(S.mode);pit()">PLAY AGAIN</button><button class="btn big" style="background:#b8860b" onclick="store()">STORE · 🪙 ${SV.coins}</button><button class="btn big" onclick="title()">TITLE SCREEN</button>`;
+ [523,659,784,1047].forEach((f,i)=>beep(f,.15,'square',.05,i*.12));show(h)}
+
+/* input */
+const AR={arrowleft:'l',arrowright:'r',arrowdown:'b',arrowup:'n'},WA={a:'l',d:'r',s:'b',w:'n',' ':'n'};
+function KB(e){const k=e.key.toLowerCase();if(WA[k])return[1,WA[k]];if(AR[k])return[S.mode==2?2:1,AR[k]];return null}
+addEventListener('keydown',e=>{if(!R||!R.on)return;const m=KB(e);if(!m)return;e.preventDefault();if(m[1]=='n'){if(!e.repeat)boost(m[0])}else K[m[0]][m[1]]=1});
+addEventListener('keyup',e=>{const m=R&&KB(e);if(m&&m[1]!='n')K[m[0]][m[1]]=0});
+document.querySelectorAll('#pads button').forEach(b=>{const k=b.dataset.k,n=+b.dataset.p;
+ b.addEventListener('pointerdown',e=>{e.preventDefault();k=='n'?boost(n):P[n][k]=1});
+ ['pointerup','pointerleave','pointercancel'].forEach(v=>b.addEventListener(v,()=>{if(k!='n')P[n][k]=0}));
+ b.addEventListener('contextmenu',e=>e.preventDefault())});
+let exT;function disarm(){clearTimeout(exT);const b=$('#ex');b.classList.remove('arm');b.textContent='✕ MENU'}
+$('#ex').onclick=e=>{const b=e.currentTarget;if(b.classList.contains('arm')){disarm();title()}else{b.classList.add('arm');b.textContent='TAP AGAIN TO EXIT';exT=setTimeout(disarm,2500)}b.blur()};
+addEventListener('keydown',e=>{if(e.key=='Escape'&&!$('#ex').hidden)$('#ex').click()});
+title();
+</script></body></html>
